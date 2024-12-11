@@ -7,12 +7,13 @@
     <style>
         body {
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
             background-color: #000;
+            color: #fff;
         }
         canvas {
             border: 1px solid #fff;
@@ -24,11 +25,34 @@
             font-size: 16px;
             cursor: pointer;
         }
+        #instructions {
+            margin-left: 20px;
+            max-width: 300px;
+        }
     </style>
 </head>
 <body>
-    <button id="startButton">Start</button>
-    <canvas id="gameCanvas" width="400" height="400"></canvas>
+    <div>
+        <button id="startButton">Start</button>
+        <canvas id="gameCanvas" width="400" height="400"></canvas>
+    </div>
+    <div id="instructions">
+        <h2>Game Instructions</h2>
+        <p>Welcome to the Snake Game! Here's how to play:</p>
+        <ul>
+            <li>Press <strong>Start</strong> to begin the game.</li>
+            <li>Use the arrow keys to control the snake:</li>
+            <ul>
+                <li><strong>Arrow Up</strong>: Move up</li>
+                <li><strong>Arrow Down</strong>: Move down</li>
+                <li><strong>Arrow Left</strong>: Move left</li>
+                <li><strong>Arrow Right</strong>: Move right</li>
+            </ul>
+            <li>Eat the red squares (food) to grow and earn points.</li>
+            <li>Avoid colliding with the walls or yourself.</li>
+            <li>Your score is displayed as you progress. Good luck!</li>
+        </ul>
+    </div>
 
     <script>
         const canvas = document.getElementById('gameCanvas');
