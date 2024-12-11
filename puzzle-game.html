@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Puzzle Game</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        canvas {
+            border: 2px solid #000;
+        }
+        #startButton {
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <button id="startButton">Start Puzzle</button>
+    <canvas id="puzzleCanvas" width="400" height="400"></canvas>
+
+    <script>
+        const canvas = document.getElementById('puzzleCanvas');
+        const ctx = canvas.getContext('2d');
+        const startButton = document.getElementById('startButton');
+
+        const rows = 3;
+        const cols = 3;
+        const tileSize = canvas.width / cols;
+        let tiles = [];
+        let emptyTile = { row: rows - 1, col: cols - 1 };
+        let isGameStarted = false;
+
+        // Load the image for the puzzle
+        const image = new Image();
+        image.src = 'your-image.jpg';
+
+        image.onload = () => {
+            drawPuzzle();
+        };
+
+        // Initialize the puzzle tiles
+        function initTiles() {
+            tiles = [];
+            for (let row = 0; row < rows; row++) {
+                for (let col = 0; col < cols; col++) {
+                    if (row === rows - 1 && col === cols - 1) {
+                        tiles.push(null); // Empty tile
+                    } else {
+                        tiles.push({ row, col });
+                    }
+                }
+            }
+            shuffleTiles();
+        }
+
+        // Shuffle the tiles
+        function shuffleTiles() {
+            for (let i = tiles.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [tiles[i], tiles[j]] = [tiles[j], tiles[i]];
+            }
+        }
+
+        // Draw the puzzle
+        function drawPuzzle() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            tiles.forEach((tile, index) => {
+                const row = Math.floor(index / cols);
+                const col = index % cols;
+
+                if (tile) {
+                    ctx.drawImage(
+                        image,
+                        tile.col * tileSize,
+                        tile.row * tileSize,
+                        tileSize,
+                        tileSize,
+                        col * tileSize,
+                        row * tileSize,
+                        tileSize,
+                        tileSize
+                    );
+                }
+            });
+        }
+
+        // Handle tile movement
+        function moveTile(row, col) {
+            const dx = Math.abs(row - emptyTile.row);
+            const dy = Math.abs(col - emptyTile.col);
+
+            if ((dx === 1 && dy === 0) || (dx === 0 && dy === 1)) {
+                const emptyIndex = emptyTile.row * cols + emptyTile.col;
+                const tileIndex = row * cols + col;
+                tiles[emptyIndex] = tiles[tileIndex];
+                tiles[tileIndex] = null;
+                emptyTile = { row, col };
+                drawPuzzle();
+                checkWin();
+            }
+        }
+
+        // Check if the player has won
+        function checkWin() {
+            for (let i = 0; i < tiles.length - 1; i++) {
+                const tile = tiles[i];
+                if (!tile || tile.row * cols + tile.col !== i) {
+                    return;
+                }
+            }
+            alert('Congratulations! You solved the puzzle!');
+        }
+
+        // Handle click events
+        canvas.addEventListener('click', (e) => {
+            if (!isGameStarted) return;
+
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            const col = Math.floor(x / tileSize);
+            const row = Math.floor(y / tileSize);
+
+            moveTile(row, col);
+        });
+
+        // Start the game
+        startButton.addEventListener('click', () => {
+            isGameStarted = true;
+            startButton.style.display = 'none';
+            initTiles();
+            drawPuzzle();
+        });
+    </script>
+</body>
+</html>
