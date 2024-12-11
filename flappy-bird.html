@@ -12,7 +12,7 @@
             align-items: center;
             height: 100vh;
             margin: 0;
-            background-color: #87CEEB;
+            background: url('your-background.jpg') no-repeat center center/cover;
             overflow: hidden;
         }
         canvas {
@@ -35,25 +35,23 @@
         const ctx = canvas.getContext('2d');
         const startButton = document.getElementById('startButton');
 
-        let bird = { x: 50, y: 150, radius: 15, gravity: 0.5, lift: -10, velocity: 0 };
+        let bird = { x: 50, y: 150, width: 40, height: 30, gravity: 0.5, lift: -10, velocity: 0 };
         let pipes = [];
         let frameCount = 0;
         let score = 0;
         let gameInterval;
+        const birdImage = new Image();
+        birdImage.src = 'your-bird-image.png';
 
-        const pipeWidth = 50;
-        const gap = 120;
+        const pipeWidth = 70;
+        const gap = 150;
 
         function drawBackground() {
-            ctx.fillStyle = '#87CEEB';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
         }
 
         function drawBird() {
-            ctx.fillStyle = '#FFD700';
-            ctx.beginPath();
-            ctx.arc(bird.x, bird.y, bird.radius, 0, Math.PI * 2);
-            ctx.fill();
+            ctx.drawImage(birdImage, bird.x, bird.y, bird.width, bird.height);
         }
 
         function drawPipes() {
@@ -78,14 +76,14 @@
         function checkCollision() {
             for (let pipe of pipes) {
                 if (
-                    bird.x + bird.radius > pipe.x &&
-                    bird.x - bird.radius < pipe.x + pipeWidth &&
-                    (bird.y - bird.radius < pipe.top || bird.y + bird.radius > pipe.top + gap)
+                    bird.x + bird.width > pipe.x &&
+                    bird.x < pipe.x + pipeWidth &&
+                    (bird.y < pipe.top || bird.y + bird.height > pipe.top + gap)
                 ) {
                     return true;
                 }
             }
-            if (bird.y + bird.radius > canvas.height || bird.y - bird.radius < 0) {
+            if (bird.y + bird.height > canvas.height || bird.y < 0) {
                 return true;
             }
             return false;
@@ -94,8 +92,8 @@
         function updateBird() {
             bird.velocity += bird.gravity;
             bird.y += bird.velocity;
-            if (bird.y + bird.radius > canvas.height) {
-                bird.y = canvas.height - bird.radius;
+            if (bird.y + bird.height > canvas.height) {
+                bird.y = canvas.height - bird.height;
                 bird.velocity = 0;
             }
         }
